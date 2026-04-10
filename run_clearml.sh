@@ -42,6 +42,11 @@ FULL_ARGS="$GPU_FLAG"
 FULL_ARGS="$FULL_ARGS $SCRIPT_ARGS"
 FULL_ARGS=$(echo "$FULL_ARGS" | xargs)
 
+# Загружаем HF_TOKEN из .env если есть
+if [ -z "$HF_TOKEN" ] && [ -f ".env" ]; then
+    export HF_TOKEN=$(grep HF_TOKEN .env | cut -d'=' -f2 | tr -d '"' | tr -d "'")
+fi
+
 # ============================================================
 # Команда clearml-task
 # ============================================================
