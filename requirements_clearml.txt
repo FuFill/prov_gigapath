@@ -1,0 +1,33 @@
+# Requirements для запуска в ClearML Docker контейнере
+# pytorch/pytorch:2.8.0-cuda12.9-cudnn9-runtime
+
+# ClearML
+clearml[s3]>=2.0.2
+
+# MinIO / S3
+boto3
+
+# OpenSlide (нужна системная библиотека + pip пакет)
+openslide-python
+
+# GigaPath зависимости
+timm>=1.0.3
+huggingface-hub
+h5py
+matplotlib
+pandas
+pillow
+tqdm
+einops
+monai
+scikit-image
+scikit-learn
+torchmetrics
+fvcore
+iopath
+transformers
+omegaconf
+lifelines
+scikit-survival
+fairscale
+tensorboard

@@ -1,0 +1,47 @@
+# ClearML Configuration File
+# Скопируйте в ~/clearml.conf или ~/.clearml.conf
+
+api {
+    # ClearML API сервер
+    web_server: "https://clearml.blackhole2.ai.innopolis.university"
+    api_server: "https://clearml.blackhole2.ai.innopolis.university"
+    files_server: "https://clearml.blackhole2.ai.innopolis.university"
+    
+    # API Credentials (получите из ClearML UI: Settings -> Workspace -> API Keys)
+    credentials {
+        "access_key" = "YOUR_ACCESS_KEY_HERE"
+        "secret_key" = "YOUR_SECRET_KEY_HERE"
+    }
+}
+
+# Настройки агента
+agent {
+    # Git user для клонирования репозиториев
+    git_user: "your_git_user"
+    git_pass: "your_git_pass"
+    
+    # Docker settings (опционально)
+    # docker_force_mount_host: false
+    # default_docker_image: "nvidia/cuda:12.0-runtime-ubuntu20.04"
+    
+    # Настройки GPU
+    gpu_device: "0"
+    
+    # Cache directory для моделей и данных
+    cache {
+        task_cache: "~/clearml_agent_cache/tasks"
+        venvs_cache: "~/clearml_agent_cache/venvs"
+        pip_download_cache: "~/clearml_agent_cache/pip"
+    }
+}
+
+# Storage credentials (для доступа к S3/MinIO)
+storage {
+    credentials {
+        # MinIO
+        "https://api.blackhole2.ai.innopolis.university:443" {
+            key: "NQVWXgIRAIIvAM0C8DbK"
+            secret: "Bd2dC49zYy5VfEiuP19s7b6VpBRz0KxClxF18cNv"
+        }
+    }
+}

@@ -1,0 +1,72 @@
+#!/bin/bash
+# Entrypoint для Docker контейнера Prov-GigaPath.
+# clearml-task запускает этот скрипт, передавая $@ из --args.
+#
+# Этот скрипт:
+#   1. Устанавливает HF_TOKEN для загрузки модели
+#   2. Устанавливает libopenslide0 (apt) — нужно для openslide-python
+#   3. Устанавливает pip зависимости
+#   4. Запускает full_pipeline.py с теми же аргументами
+
+set -e
+
+echo "=========================================="
+echo "Prov-GigaPath Docker Entrypoint"
+echo "=========================================="
+echo "Аргументы: $@"
+echo ""
+
+# ============================================================
+# 0. Устанавливаем HF_TOKEN (если передан через переменную окружения)
+# ============================================================
+if [ -n "$HF_TOKEN" ]; then
+    echo "[0/4] HF_TOKEN установлен"
+    export HF_TOKEN="$HF_TOKEN"
+else
+    echo "[0/4] ВНИМАНИЕ: HF_TOKEN не установлен, загрузка модели может завершиться ошибкой"
+fi
+
+# ============================================================
+# 1. Устанавливаем libopenslide0 (системная библиотека для openslide-python)
+# ============================================================
+if ! ldconfig -p 2>/dev/null | grep -q libopenslide; then
+    echo "[1/4] Установка libopenslide0..."
+    apt-get update -qq 2>/dev/null
+    apt-get install -y -qq libopenslide0 2>/dev/null
+    echo "  OK"
+else
+    echo "[1/4] libopenslide0 уже установлен"
+fi
+
+# ============================================================
+# 2. Устанавливаем pip зависимости
+# ============================================================
+echo "[2/4] Установка pip зависимостей..."
+
+# Проверяем есть ли requirements_clearml.txt в текущей директории
+# (clearml-task клонирует репозиторий и запускает из его корня)
+if [ -f "requirements_clearml.txt" ]; then
+    pip install --quiet -r requirements_clearml.txt 2>&1 | tail -5
+else
+    echo "  [WARN] requirements_clearml.txt не найден, устанавливаю напрямую..."
+    pip install --quiet clearml[s3] boto3 openslide-python timm huggingface-hub h5py matplotlib pandas pillow tqdm einops monai scikit-image scikit-learn torchmetrics fvcore iopath transformers omegaconf lifelines scikit-survival fairscale tensorboard 2>&1 | tail -5
+fi
+
+echo "  OK"
+
+# ============================================================
+# 3. Устанавливаем дополнительные зависимости для GigaPath
+# ============================================================
+echo "[3/4] Установка дополнительных зависимостей..."
+pip install --quiet --no-deps flash-attn 2>/dev/null || echo "  [WARN] flash-attn не установлен (опционально)"
+pip install --quiet --no-deps xformers 2>/dev/null || echo "  [WARN] xformers не установлен (опционально)"
+echo "  OK (опциональные зависимости)"
+
+# ============================================================
+# 4. Запускаем full_pipeline.py
+# ============================================================
+echo "[4/4] Запуск full_pipeline.py..."
+echo "=========================================="
+
+# Передаём все аргументы скрипту
+exec python full_pipeline.py "$@"
