@@ -55,8 +55,8 @@ echo.
 echo storage {
 echo     credentials {
 echo         "https://api.blackhole2.ai.innopolis.university:443" {
-echo             key: "NQVWXgIRAIIvAM0C8DbK"
-echo             secret: "Bd2dC49zYy5VfEiuP19s7b6VpBRz0KxClxF18cNv"
+echo             key: "YOUR_MINIO_ACCESS_KEY"
+echo             secret: "YOUR_MINIO_SECRET_KEY"
 echo         }
 echo     }
 echo }

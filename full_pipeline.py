@@ -44,11 +44,11 @@ from gigapath.pipeline import (
 # ============================================================
 # Конфигурация MinIO
 # ============================================================
-MINIO_ENDPOINT = "https://api.blackhole2.ai.innopolis.university:443"
-MINIO_ACCESS_KEY = "NQVWXgIRAIIvAM0C8DbK"
-MINIO_SECRET_KEY = "Bd2dC49zYy5VfEiuP19s7b6VpBRz0KxClxF18cNv"
-MINIO_BUCKET = "pershin-medailab"
-MINIO_PREFIX = "Pathomorphology/CAMELYON"
+MINIO_ENDPOINT = os.environ.get("MINIO_ENDPOINT", "https://api.blackhole2.ai.innopolis.university:443")
+MINIO_ACCESS_KEY = os.environ.get("MINIO_ACCESS_KEY", "")
+MINIO_SECRET_KEY = os.environ.get("MINIO_SECRET_KEY", "")
+MINIO_BUCKET = os.environ.get("MINIO_BUCKET", "pershin-medailab")
+MINIO_PREFIX = os.environ.get("MINIO_PREFIX", "Pathomorphology/CAMELYON")
 
 
 def get_minio_client():

@@ -49,8 +49,8 @@ agent {
 storage {
     credentials {
         "https://api.blackhole2.ai.innopolis.university:443" {
-            key: "NQVWXgIRAIIvAM0C8DbK"
-            secret: "Bd2dC49zYy5VfEiuP19s7b6VpBRz0KxClxF18cNv"
+            key: "\${MINIO_ACCESS_KEY:-YOUR_ACCESS_KEY}"
+            secret: "\${MINIO_SECRET_KEY:-YOUR_SECRET_KEY}"
         }
     }
 }

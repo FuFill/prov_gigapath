@@ -40,8 +40,8 @@ storage {
     credentials {
         # MinIO
         "https://api.blackhole2.ai.innopolis.university:443" {
-            key: "NQVWXgIRAIIvAM0C8DbK"
-            secret: "Bd2dC49zYy5VfEiuP19s7b6VpBRz0KxClxF18cNv"
+            key: "YOUR_MINIO_ACCESS_KEY"
+            secret: "YOUR_MINIO_SECRET_KEY"
         }
     }
 }
