@@ -301,7 +301,15 @@ def process_slide(sample: Dict["SlideKey", Any], level: int, margin: int, tile_s
 
         loader = LoadROId(WSIReader(backend="OpenSlide"), level=level, margin=margin,
                           foreground_threshold=foreground_threshold)
-        sample = loader(sample)  # load 'image' from disk
+        try:
+            sample = loader(sample)  # load 'image' from disk
+        except Exception as e:
+            logging.error(f"LoadROId failed for {slide_id}: {e}")
+            failed_tiles_file.write(f"{slide_id}_load_failed\n")
+            dataset_csv_file.close()
+            failed_tiles_file.close()
+            logging.warning(f"Skipping slide {slide_id} due to loading error: {e}")
+            return output_tiles_dir
 
         # Save ROI thumbnail
         slide_image = sample["image"]
