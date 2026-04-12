@@ -313,11 +313,15 @@ def process_slide(sample: Dict["SlideKey", Any], level: int, margin: int, tile_s
 
         # Save ROI thumbnail
         slide_image = sample["image"]
-        plt.figure()
-        plt.imshow(slide_image.transpose(1, 2, 0))
-        plt.savefig(thumbnail_dir / (slide_image_path.name + "_roi.png"))
-        plt.close()
-        logging.info(f"Saving thumbnail {thumbnail_dir / (slide_image_path.name + '_roi.png')}, shape {slide_image.shape}")
+        try:
+            plt.figure()
+            plt.imshow(slide_image.transpose(1, 2, 0))
+            plt.savefig(thumbnail_dir / (slide_image_path.name + "_roi.png"))
+            plt.close()
+            logging.info(f"Saving thumbnail {thumbnail_dir / (slide_image_path.name + '_roi.png')}, shape {slide_image.shape}")
+        except Exception as e:
+            logging.warning(f"Failed to save ROI thumbnail for {slide_id}: {e}")
+            plt.close('all')
 
         logging.info(f"Tiling slide {slide_id} ...")
         image_tiles, rel_tile_locations, occupancies, _ = \
