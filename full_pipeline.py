@@ -726,7 +726,8 @@ def main():
         task.connect(config)
 
         # Проверяем — мы уже на агенте или ещё локально?
-        if not Task.running_remotely():
+        # CLEARML_TASK_ID устанавливается агентом при удалённом запуске
+        if "CLEARML_TASK_ID" not in os.environ:
             # Ещё не на агенте — отправляем задачу
             print("Отправляю задачу на агент (очередь: default)...")
             task.execute_remotely(queue_name="default", exit_process=True)
