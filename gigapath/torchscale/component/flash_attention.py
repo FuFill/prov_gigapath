@@ -117,7 +117,9 @@ if torch.cuda.is_available():
                     return grads.dq, grads.dk, grads.dv, None, grads.db, None, None
             
             flash_attn_func = FlashAttnFunc.apply
-    except ModuleNotFoundError:
+    except (ModuleNotFoundError, ImportError):
+        # ModuleNotFoundError — пакет не установлен
+        # ImportError — broken CUDA module (несовместимость версий)
         flash_attn_func = None
 else:
     flash_attn_func = None
