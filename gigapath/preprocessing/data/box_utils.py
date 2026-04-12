@@ -134,10 +134,15 @@ def get_bounding_box(mask: np.ndarray) -> Box:
     :raises TypeError: When the input mask has more than two dimensions.
     :raises RuntimeError: When all elements in the mask are zero.
     """
+    # Handle scalar masks (can happen with numpy version incompatibilities)
+    if np.ndim(mask) == 0:
+        raise RuntimeError(f"Expected a 2D array but got a scalar: {mask}")
     if mask.ndim != 2:
         raise TypeError(f"Expected a 2D array but got an array with shape {mask.shape}")
 
-    slices = ndimage.find_objects(mask > 0)
+    # Ensure mask is a proper boolean array for scipy
+    binary_mask = np.asarray(mask, dtype=bool)
+    slices = ndimage.find_objects(binary_mask)
     if not slices:
         raise RuntimeError("The input mask is empty")
     assert len(slices) == 1
