@@ -13,6 +13,7 @@ PROJECT="pershin-medailab"
 NAME="Pathomorphology"
 QUEUE="default"
 DOCKER_IMAGE="pytorch/pytorch:2.8.0-cuda12.9-cudnn9-runtime"
+REPO_URL="ssh://code.university.innopolis.ru:22/AI/Лаборатория Ильи Першина/_git/prov-gigapath"
 
 MAX_SLIDES=""
 GPU_FLAG=""
@@ -42,20 +43,32 @@ FULL_ARGS="$GPU_FLAG"
 FULL_ARGS="$FULL_ARGS $SCRIPT_ARGS"
 FULL_ARGS=$(echo "$FULL_ARGS" | xargs)
 
-# Загружаем HF_TOKEN из .env если есть
-if [ -z "$HF_TOKEN" ] && [ -f ".env" ]; then
-    export HF_TOKEN=$(grep HF_TOKEN .env | cut -d'=' -f2 | tr -d '"' | tr -d "'")
+# Загружаем env vars из .env
+if [ -f ".env" ]; then
+    source .env
+    # Убираем 'export ' если есть
+    HF_TOKEN="${HF_TOKEN#export }"
+    MINIO_ACCESS_KEY="${MINIO_ACCESS_KEY#export }"
+    MINIO_SECRET_KEY="${MINIO_SECRET_KEY#export }"
+    MINIO_ENDPOINT="${MINIO_ENDPOINT#export }"
+    MINIO_BUCKET="${MINIO_BUCKET#export }"
+    MINIO_PREFIX="${MINIO_PREFIX#export }"
 fi
 
 # ============================================================
 # Команда clearml-task
 # ============================================================
+# --docker_args передаёт env vars для HF и MinIO
+DOCKER_CMD_ARGS="-e HF_TOKEN=$HF_TOKEN -e MINIO_ACCESS_KEY=$MINIO_ACCESS_KEY -e MINIO_SECRET_KEY=$MINIO_SECRET_KEY -e MINIO_ENDPOINT=$MINIO_ENDPOINT -e MINIO_BUCKET=$MINIO_BUCKET -e MINIO_PREFIX=$MINIO_PREFIX"
 CMD="clearml-task"
 CMD="$CMD --project \"$PROJECT\""
 CMD="$CMD --name \"$NAME\""
 CMD="$CMD --queue \"$QUEUE\""
+CMD="$CMD --repo \"$REPO_URL\""
+CMD="$CMD --branch master"
 CMD="$CMD --script docker_entrypoint.sh"
 CMD="$CMD --docker \"$DOCKER_IMAGE\""
+CMD="$CMD --docker_args \"$DOCKER_CMD_ARGS\""
 # --requirements НЕ используется — openslide ставится в entrypoint ДО pip install
 
 if [ -n "$FULL_ARGS" ]; then
