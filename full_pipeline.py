@@ -344,24 +344,29 @@ def process_single_slide(
         print("\n[2/5] Тайлинг слайда...")
         print(f"NOTE: Prov-GigaPath обучен на слайдах с 0.5 mpp")
 
-        tile_one_slide(
-            slide_file=slide_path,
-            save_dir=str(slide_output_dir / "tiling_output"),
-            level=level,
-            tile_size=tile_size,
-        )
+        try:
+            tile_one_slide(
+                slide_file=slide_path,
+                save_dir=str(slide_output_dir / "tiling_output"),
+                level=level,
+                tile_size=tile_size,
+            )
 
-        # Копируем тайлы в удобную директорию
-        slide_id_from_path = Path(slide_path).name
-        tiling_tiles = slide_output_dir / "tiling_output" / "output" / slide_id_from_path
-        if tiling_tiles.exists():
-            shutil.copytree(str(tiling_tiles), str(tiles_dir), dirs_exist_ok=True)
-        else:
-            # Попробуем найти тайлы в поддиректории
-            for d in (slide_output_dir / "tiling_output" / "output").iterdir():
-                if d.is_dir():
-                    shutil.copytree(str(d), str(tiles_dir), dirs_exist_ok=True)
-                    break
+            # Копируем тайлы в удобную директорию
+            slide_id_from_path = Path(slide_path).name
+            tiling_tiles = slide_output_dir / "tiling_output" / "output" / slide_id_from_path
+            if tiling_tiles.exists():
+                shutil.copytree(str(tiling_tiles), str(tiles_dir), dirs_exist_ok=True)
+            else:
+                # Попробуем найти тайлы в поддиректории
+                for d in (slide_output_dir / "tiling_output" / "output").iterdir():
+                    if d.is_dir():
+                        shutil.copytree(str(d), str(tiles_dir), dirs_exist_ok=True)
+                        break
+        except Exception as e:
+            print(f"[ERROR] Тайлинг не удался: {e}")
+            print(f"  Пропускаю слайд {slide_name}")
+            return results
     else:
         print(f"\n[2/5] Пропускаю тайлинг, использую {tiles_dir}")
     
