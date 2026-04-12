@@ -13,7 +13,7 @@ PROJECT="pershin-medailab"
 NAME="Pathomorphology"
 QUEUE="default"
 DOCKER_IMAGE="pytorch/pytorch:2.8.0-cuda12.9-cudnn9-runtime"
-REPO_URL="ssh://code.university.innopolis.ru:22/AI/Лаборатория Ильи Першина/_git/prov-gigapath"
+REPO_URL="https://code.university.innopolis.ru/AI/Лаборатория Ильи Першина/_git/prov-gigapath"
 
 MAX_SLIDES=""
 GPU_FLAG=""
