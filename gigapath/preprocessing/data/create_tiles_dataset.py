@@ -39,7 +39,13 @@ def select_tiles(foreground_mask: np.ndarray, occupancy_threshold: float) \
     if occupancy_threshold < 0. or occupancy_threshold > 1.:
         raise ValueError("Tile occupancy threshold must be between 0 and 1")
     occupancy = foreground_mask.mean(axis=(-2, -1), dtype=np.float16)
-    return (occupancy > occupancy_threshold).squeeze(), occupancy.squeeze()  # type: ignore
+    selected = (occupancy > occupancy_threshold).squeeze()
+    occ = occupancy.squeeze()
+    # Ensure arrays, not scalars (happens with single tile)
+    if np.ndim(selected) == 0:
+        selected = np.array([selected])
+        occ = np.array([occ])
+    return selected, occ  # type: ignore
 
 
 def get_tile_descriptor(tile_location: Sequence[int]) -> str:
